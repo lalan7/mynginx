@@ -12,13 +12,12 @@ sudo docker build -t sharepointoscar/mywebsite:test .'''
     stage('Login & Push Image to Docker Hub') {
       steps {
         sh '''echo executing Login to Docker Hub Step
-environment { 
-
-          DOCKER_CREDENTIALS = credentials('dockerhubCreds')
- 
-          sh sudo docker login --username DOCKER_CREDENTIALS_USR --password DOCKER_CREDENTIALS_PSW
-          sh sudo docker push sharepointoscar/mywebsite:test
-}
+        withCredentials([[$class: 'UsernamePasswordMultiBinding', credentialsId:'dockerhubCreds', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD']]) {
+            //sh 'cf login some.awesome.url -u $USERNAME -p $PASSWORD'
+            echo 
+            sh sudo docker login --username $USERNAME --password $PASSWORD
+            sh sudo docker push sharepointoscar/mywebsite:test
+        }
 '''
       }
     }
